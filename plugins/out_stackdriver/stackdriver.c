@@ -569,9 +569,10 @@ static int stackdriver_format(const void *data, size_t bytes,
             /* logName */
             if (ctx->log_name_kubernetes_key
                 && get_string(&log_name, &kubernetes, ctx->log_name_kubernetes_key) == 0) {
+                flb_sds_t log_name_str = flb_sds_create_len(log_name.ptr, log_name.size);
                 len = snprintf(path, sizeof(path) - 1,
-                               "projects/%s/logs/%s",
-                               ctx->project_id, flb_sds_create_len(log_name.ptr, log_name.size));
+                    "projects/%s/logs/%s", ctx->project_id, log_name_str);
+                flb_sds_destroy(log_name_str);
                 flb_debug("[out_stackdriver] custom log name: %s", path);
             }
             else {
